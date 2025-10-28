@@ -1,0 +1,4 @@
+body{margin:0;font-family:sans-serif;background:#0b1220;color:#e8eef9}#map{height:100vh;width:100%}
+#app{display:grid;grid-template-columns:340px 1fr}aside{background:#111a2b;padding:10px;overflow:auto}
+details{background:#0e1728;margin:6px 0;padding:6px;border-radius:10px}select,button{width:100%;margin:4px 0;padding:6px;border-radius:8px}
+button{background:#4cc9f0;color:#000;font-weight:bold;cursor:pointer}button.secondary{background:#1b3555;color:#e8eef9}

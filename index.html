@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mapa Dinámico – MINEDUC / Cultura / Deporte / Educación Superior</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="app">
+    <aside>
+      <header>
+        <h1>Mapa dinámico</h1>
+        <span class="tag">EPSG:4326</span>
+      </header>
+      <div class="hint">4 capas (CSV↔Supabase), clúster de marcadores y 2 capas GeoJSON (Provincias, Vías).</div>
+      <details class="section" open>
+        <summary>Tabla 1 — IES / Establecimientos</summary>
+        <div class="body">
+          <div class="grid">
+            <div><label>Provincia</label><select id="t1-prov"></select></div>
+            <div><label>Cantón</label><select id="t1-canton"></select></div>
+            <div><label>Parroquia</label><select id="t1-parroquia"></select></div>
+            <div><label>Tipo / Financiamiento</label><select id="t1-tipo"></select></div>
+          </div>
+          <div class="controls">
+            <button id="t1-apply">Aplicar</button>
+            <button class="secondary" id="t1-clear">Limpiar</button>
+            <label class="chk"><input type="checkbox" id="t1-toggle" checked/> Mostrar capa</label>
+          </div>
+        </div>
+      </details>
+      <details class="section">
+        <summary>Tabla 2 — Cultura y Patrimonio</summary>
+        <div class="body">
+          <div class="grid">
+            <div><label>Provincia</label><select id="t2-prov"></select></div>
+            <div><label>Cantón</label><select id="t2-canton"></select></div>
+            <div><label>Parroquia</label><select id="t2-parroquia"></select></div>
+            <div><label>Tipo</label><select id="t2-tipo"></select></div>
+          </div>
+          <div class="controls">
+            <button id="t2-apply">Aplicar</button>
+            <button class="secondary" id="t2-clear">Limpiar</button>
+            <label class="chk"><input type="checkbox" id="t2-toggle" checked/> Mostrar capa</label>
+          </div>
+        </div>
+      </details>
+      <details class="section">
+        <summary>Tabla 3 — Infraestructura deportiva</summary>
+        <div class="body">
+          <div class="grid">
+            <div><label>Provincia</label><select id="t3-prov"></select></div>
+            <div><label>Cantón</label><select id="t3-canton"></select></div>
+            <div><label>Parroquia</label><select id="t3-parroquia"></select></div>
+            <div><label>Tipo / Categoría</label><select id="t3-tipo"></select></div>
+          </div>
+          <div class="controls">
+            <button id="t3-apply">Aplicar</button>
+            <button class="secondary" id="t3-clear">Limpiar</button>
+            <label class="chk"><input type="checkbox" id="t3-toggle" checked/> Mostrar capa</label>
+          </div>
+        </div>
+      </details>
+      <details class="section">
+        <summary>Tabla 4 — Universidades e Institutos</summary>
+        <div class="body">
+          <div class="grid">
+            <div><label>Provincia</label><select id="t4-prov"></select></div>
+            <div><label>Cantón</label><select id="t4-canton"></select></div>
+            <div><label>Parroquia</label><select id="t4-parroquia"></select></div>
+            <div><label>Tipo</label><select id="t4-tipo"></select></div>
+          </div>
+          <div class="controls">
+            <button id="t4-apply">Aplicar</button>
+            <button class="secondary" id="t4-clear">Limpiar</button>
+            <label class="chk"><input type="checkbox" id="t4-toggle" checked/> Mostrar capa</label>
+          </div>
+        </div>
+      </details>
+      <details class="section">
+        <summary>Capas base GeoJSON</summary>
+        <div class="body">
+          <div class="controls">
+            <label class="chk"><input type="checkbox" id="ly-provincias" checked/> Provincias (polígono)</label>
+            <label class="chk"><input type="checkbox" id="ly-vias" checked/> Vías principales (líneas)</label>
+          </div>
+        </div>
+      </details>
+    </aside>
+    <main><div id="map"></div></main>
+  </div>
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
