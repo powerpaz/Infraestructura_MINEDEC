@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Visor CSV (sin base de datos)</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Visor de Registros desde CSV (sin Neon)</h1>
+  </header>
+
+  <section class="toolbar">
+    <label>Fuente:</label>
+    <select id="csvSelect">
+      <option value="data/Tabla1.csv">Tabla1.csv</option>
+      <option value="data/Tabla2.csv">Tabla2.csv</option>
+      <option value="data/Tabla3.csv">Tabla3.csv</option>
+      <option value="data/Tabla4.csv">Tabla4.csv</option>
+    </select>
+    <input type="file" id="csvFile" accept=".csv" />
+    <input type="text" id="search" placeholder="Buscar..." />
+    <span id="status"></span>
+  </section>
+
+  <section id="tableWrap">
+    <table id="dataTable">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+    <div id="pager">
+      <button id="prevBtn">◀</button>
+      <span id="pageInfo"></span>
+      <button id="nextBtn">▶</button>
+    </div>
+  </section>
+
+  <section id="mapWrap">
+    <div id="map"></div>
+    <div id="legend">
+      <b>Leyenda</b><br>
+      <span class="dot"></span> Registros con coordenadas
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>

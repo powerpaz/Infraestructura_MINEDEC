@@ -1,0 +1,15 @@
+body{margin:0;font-family:system-ui,Arial}
+header{background:#0b3d2e;color:#fff;padding:12px 16px}
+h1{margin:0;font-size:20px}
+.toolbar{display:flex;gap:10px;align-items:center;padding:10px;background:#f5f5f7;flex-wrap:wrap}
+.toolbar input[type="text"]{padding:6px 8px;width:220px}
+#status{margin-left:auto;color:#333;font-size:13px}
+#tableWrap{padding:10px;overflow:auto}
+#dataTable{border-collapse:collapse;width:100%}
+#dataTable th,#dataTable td{border:1px solid #e5e7eb;padding:6px 8px;font-size:13px}
+#dataTable th{background:#f3f4f6;position:sticky;top:0}
+#pager{display:flex;gap:10px;align-items:center;justify-content:center;margin:10px 0}
+#mapWrap{height:55vh;padding:10px}
+#map{height:100%;border:1px solid #e5e7eb;border-radius:6px}
+#legend{position:absolute;right:20px;bottom:20px;background:#fff;border:1px solid #ddd;padding:6px 8px;border-radius:6px;font-size:12px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#e11d48;border:2px solid #fff;box-shadow:0 0 0 1px #be123c;margin-right:6px}
