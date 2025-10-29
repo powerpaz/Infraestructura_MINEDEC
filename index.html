@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Visor CSV (sin base de datos)</title>
+  <title>Visor de Infraestructura Cultural y Educativa</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
@@ -11,41 +11,75 @@
 </head>
 <body>
   <header>
-    <h1>Visor de Registros desde CSV (sin Neon)</h1>
+    <div class="brand">
+      <span class="brand-mark">Infraestructura MINEDEC</span>
+      <p class="brand-desc">Explorador de registros abiertos desde archivos CSV</p>
+    </div>
   </header>
 
-  <section class="toolbar">
-    <label>Fuente:</label>
-    <select id="csvSelect">
-      <option value="data/Tabla1.csv">Tabla1.csv</option>
-      <option value="data/Tabla2.csv">Tabla2.csv</option>
-      <option value="data/Tabla3.csv">Tabla3.csv</option>
-      <option value="data/Tabla4.csv">Tabla4.csv</option>
-    </select>
-    <input type="file" id="csvFile" accept=".csv" />
-    <input type="text" id="search" placeholder="Buscar..." />
-    <span id="status"></span>
-  </section>
+  <main class="layout">
+    <section id="controlPanel">
+      <div class="toolbar">
+        <label class="field">
+          <span>Conjunto de datos</span>
+          <select id="csvSelect">
+            <option value="data/Tabla1.csv">Matriz de universidades y escuelas politécnicas</option>
+            <option value="data/Tabla4.csv">Matriz de institutos superiores técnicos y tecnológicos</option>
+            <option value="data/Tabla2.csv">Estructura de la EOD y Repositorios de Cultura</option>
+            <option value="data/Tabla3.csv">Matriz de infraestructura deportiva</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>CSV local</span>
+          <input type="file" id="csvFile" accept=".csv" />
+        </label>
+        <div id="status"></div>
+      </div>
 
-  <section id="tableWrap">
-    <table id="dataTable">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
-    <div id="pager">
-      <button id="prevBtn">◀</button>
-      <span id="pageInfo"></span>
-      <button id="nextBtn">▶</button>
-    </div>
-  </section>
+      <section id="datasetMeta">
+        <h2 id="datasetTitle"></h2>
+        <p id="datasetDesc"></p>
+      </section>
 
-  <section id="mapWrap">
-    <div id="map"></div>
-    <div id="legend">
-      <b>Leyenda</b><br>
-      <span class="dot"></span> Registros con coordenadas
-    </div>
-  </section>
+      <section id="filtersSection">
+        <div class="filtersHeader">
+          <h3>Filtros</h3>
+          <button type="button" id="clearFilters" class="ghost">Limpiar filtros</button>
+        </div>
+        <div id="filters" class="filtersGrid"></div>
+        <label class="field searchField">
+          <span>Búsqueda rápida</span>
+          <input type="text" id="search" placeholder="Ej. provincia, nombre, tipo..." />
+        </label>
+      </section>
+
+      <section id="tableWrap">
+        <div class="tableHeader">
+          <h3>Registros encontrados</h3>
+          <div id="pageInfo"></div>
+        </div>
+        <div class="tableScroll">
+          <table id="dataTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div id="pager">
+          <button id="prevBtn" type="button">◀</button>
+          <button id="nextBtn" type="button">▶</button>
+        </div>
+      </section>
+    </section>
+
+    <section id="mapWrap">
+      <div id="map"></div>
+      <div id="legend">
+        <strong>Leyenda</strong>
+        <span class="dot"></span>
+        <span>Registros con coordenadas</span>
+      </div>
+    </section>
+  </main>
 
   <script src="app.js"></script>
 </body>
