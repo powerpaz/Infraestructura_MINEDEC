@@ -1,2 +1,0 @@
-window.APP_CONFIG={LOCAL_CSV:{t1:'./data/Tabla1.csv',t2:'./data/Tabla2.csv',t3:'./data/Tabla3.csv',t4:'./data/Tabla4.csv'},
-GEOJSON:{provincias:'./data/provincias_simplificado.geojson',vias:'./data/Vias_princiaples.geojson'}};
