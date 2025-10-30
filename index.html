@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Infraestructura Educativa - MINEDec</title>
+  <link rel="stylesheet" href="https://unpkg.com/purecss@2.1.0/build/pure-min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <h1>Infraestructura Educativa - MINEDec <span id="env-label" class="badge">inicializando…</span></h1>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="tabs">
+      <button class="tab active" data-tab="t1">Tabla 1 — Instituciones & Establecimientos</button>
+      <button class="tab" data-tab="t2">Tabla 2 — Cultura & Patrimonio</button>
+      <button class="tab" data-tab="t3">Tabla 3 — Infraestructura Deportiva</button>
+      <button class="tab" data-tab="t4">Tabla 4 — Universidades & Técnicos</button>
+    </div>
+
+    <!-- LAYOUT estilo Presupuesto: mapa izquierdo, panel derecho -->
+    <section id="t1" class="tab-pane">
+      <div class="two-col">
+        <div class="left-col card">
+          <div class="flex-head">
+            <h3>Mapa (Tabla 1)</h3>
+            <label class="toggle"><input type="checkbox" id="toggle-points" checked> Mostrar puntos</label>
+          </div>
+          <div id="map"></div>
+          <div class="muted small">Capa: División política (provincias). Marcadores agrupados en clusters.</div>
+        </div>
+
+        <div class="right-col card">
+          <h3>Filtros</h3>
+          <div class="filters-row">
+            <input id="f-texto" type="search" placeholder="Buscar por nombre...">
+            <select id="f-tipo"><option value="">Tipo</option></select>
+            <select id="f-estado"><option value="">Estado</option></select>
+            <button class="pure-button pure-button-primary" id="btn-reset">Limpiar filtros</button>
+          </div>
+          <p id="t1-count" class="muted"></p>
+          <div class="table-wrap">
+            <table class="pure-table pure-table-bordered" id="t1-table"><thead></thead><tbody></tbody></table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="t2" class="tab-pane" style="display:none">
+      <div class="card">
+        <h3>EOD y Repositorios — Cultura y Patrimonio</h3>
+        <div id="t2-status" class="muted"></div>
+        <div class="table-wrap tall">
+          <table class="pure-table pure-table-bordered" id="t2-table"><thead></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <section id="t3" class="tab-pane" style="display:none">
+      <div class="card">
+        <h3>Infraestructura Deportiva</h3>
+        <div id="t3-status" class="muted"></div>
+        <div class="table-wrap tall">
+          <table class="pure-table pure-table-bordered" id="t3-table"><thead></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <section id="t4" class="tab-pane" style="display:none">
+      <div class="card">
+        <h3>Universidades y Técnicos</h3>
+        <div id="t4-status" class="muted"></div>
+        <div class="table-wrap tall">
+          <table class="pure-table pure-table-bordered" id="t4-table"><thead></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">© MINEDec — Estilo Presupuesto, clustering y Supabase</footer>
+
+  <script src="assets/config.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
