@@ -7,6 +7,9 @@
   const statusBox = document.getElementById('status');
   const setStatus = (msg) => statusBox.innerHTML = msg;
 
+  let allData = { tabla1: [], tabla2: [], tabla3: [], tabla4: [] };
+  let allLayers = {};
+
   function toNum(v) {
     if (v == null) return NaN;
     if (typeof v === 'string') {
@@ -35,7 +38,7 @@
     });
   }
 
-  function popupInstitucion(row) {
+  function popupInstitucion(row, type) {
     const keys = Object.keys(row);
     const by = (k, ...alts) => {
       const targets = [k, ...alts].map(s => String(s).toLowerCase());
@@ -43,28 +46,42 @@
     };
     const get = k => (k && row[k] != null && String(row[k]).trim() !== '') ? row[k] : '—';
     
-    const amieK = by('amie');
-    const nombreK = by('nom_institucion_educativa', 'nombre', 'institucion');
-    const sostK = by('nom_sostenimiento', 'sostenimiento', 'te_fin');
-    const regK = by('regimen', 'régimen');
-    const provK = by('dpa_despro', 'provincia');
-    const zonaK = by('da_zona', 'zona');
+    let html = `<div style="font-size: 11px; color: #fff; line-height: 1.6;">`;
     
-    return `<div>
-      <b>AMIE:</b> ${get(amieK)}<br>
-      <b>Nombre:</b> ${get(nombreK)}<br>
-      <b>Sostenimiento:</b> ${get(sostK)}<br>
-      <b>Régimen:</b> ${get(regK)}<br>
-      <b>Provincia:</b> ${get(provK)}<br>
-      <b>Zona:</b> ${get(zonaK)}
-    </div>`;
-  }
-
-  function popupGeneric(row) {
-    return Object.entries(row)
-      .filter(([k, v]) => v != null && String(v).trim() !== '')
-      .slice(0, 16)
-      .map(([k, v]) => `<b>${k}</b>: ${v}`).join('<br>');
+    if (type === 'tabla1') {
+      const amieK = by('amie');
+      const nombreK = by('nom_institucion_educativa', 'nombre', 'institucion');
+      const sostK = by('nom_sostenimiento', 'sostenimiento', 'te_fin');
+      const regK = by('regimen', 'régimen');
+      const provK = by('dpa_despro', 'provincia');
+      const zonaK = by('da_zona', 'zona');
+      
+      html += `<b style="color: #4cc9f0;">📚 INSTITUCIÓN</b><br>`;
+      html += `<b>AMIE:</b> ${get(amieK)}<br>`;
+      html += `<b>Nombre:</b> ${get(nombreK)}<br>`;
+      html += `<b>Sostenimiento:</b> ${get(sostK)}<br>`;
+      html += `<b>Régimen:</b> ${get(regK)}<br>`;
+      html += `<b>Provincia:</b> ${get(provK)}<br>`;
+      html += `<b>Zona:</b> ${get(zonaK)}`;
+    } else if (type === 'tabla2') {
+      html += `<b style="color: #b5179e;">📚 CULTURA</b><br>`;
+      for (let [k, v] of Object.entries(row).slice(0, 8)) {
+        if (v != null && String(v).trim() !== '') html += `<b>${k}:</b> ${v}<br>`;
+      }
+    } else if (type === 'tabla3') {
+      html += `<b style="color: #f77f00;">⚽ DEPORTE</b><br>`;
+      for (let [k, v] of Object.entries(row).slice(0, 8)) {
+        if (v != null && String(v).trim() !== '') html += `<b>${k}:</b> ${v}<br>`;
+      }
+    } else if (type === 'tabla4') {
+      html += `<b style="color: #43aa8b;">🎓 UNIVERSIDAD</b><br>`;
+      for (let [k, v] of Object.entries(row).slice(0, 8)) {
+        if (v != null && String(v).trim() !== '') html += `<b>${k}:</b> ${v}<br>`;
+      }
+    }
+    
+    html += `</div>`;
+    return html;
   }
 
   async function loadCSV(path) {
@@ -90,13 +107,13 @@
       return null;
     }
     
+    allData.tabla1 = data;
     const layer = makeCluster('tabla1');
     let ok = 0, bad = 0;
     for (const row of data) {
       const keys = Object.keys(row);
       const by = k => keys.find(c => c && c.toLowerCase() === k);
       
-      // Leer coordenadas WGS84: longitud y latitud
       let lat = toNum(row[by('latitud')]);
       let lon = toNum(row[by('longitud')]);
       
@@ -111,7 +128,7 @@
         color: '#fff',
         weight: 1,
         fillOpacity: .9
-      }).bindPopup(popupInstitucion(row)));
+      }).bindPopup(popupInstitucion(row, 'tabla1')));
       ok++;
     }
     
@@ -120,9 +137,10 @@
     return layer;
   }
 
-  async function loadGeneric(path, color, classKey, nombre) {
+  async function loadGeneric(path, color, classKey, nombre, tipo) {
     try {
       const data = await loadCSV(path);
+      allData[tipo] = data;
       const layer = makeCluster(classKey);
       let ok = 0;
 
@@ -130,7 +148,6 @@
         const keys = Object.keys(row);
         const by = k => keys.find(c => c && c.toLowerCase() === k);
         
-        // Intentar WGS84 primero, luego fallback a UTM
         let lat = toNum(row[by('latitud')]);
         let lon = toNum(row[by('longitud')]);
         
@@ -147,7 +164,7 @@
           color: '#fff',
           weight: 1,
           fillOpacity: .9
-        }).bindPopup(popupGeneric(row)));
+        }).bindPopup(popupInstitucion(row, tipo)));
         ok++;
       }
 
@@ -159,31 +176,91 @@
     }
   }
 
+  function setupSearch() {
+    const searchInput = document.getElementById('search-input');
+    const clearBtn = document.getElementById('clear-search');
+    
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.trim();
+      if (query.length > 0) {
+        clearBtn.style.display = 'block';
+        searchInstituciones(query);
+      } else {
+        clearBtn.style.display = 'none';
+        showAllLayers();
+      }
+    });
+
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      clearBtn.style.display = 'none';
+      showAllLayers();
+    });
+  }
+
+  function searchInstituciones(query) {
+    const queryLower = query.toLowerCase();
+    const foundData = {};
+    
+    Object.entries(allData).forEach(([tableKey, rows]) => {
+      foundData[tableKey] = [];
+      rows.forEach((row, idx) => {
+        const keys = Object.keys(row);
+        const by = k => keys.find(c => c && c.toLowerCase() === k);
+        
+        const amie = row[by('amie')] || '';
+        const nombre = row[by('nom_institucion_educativa') || by('nombre') || by('institucion')] || '';
+        
+        if (amie.toLowerCase().includes(queryLower) || nombre.toLowerCase().includes(queryLower)) {
+          foundData[tableKey].push(idx);
+        }
+      });
+    });
+
+    // Ocultar todas las capas
+    Object.values(allLayers).forEach(layer => {
+      if (layer && map.hasLayer(layer)) map.removeLayer(layer);
+    });
+
+    // Mostrar solo resultados
+    Object.entries(foundData).forEach(([tableKey, indices]) => {
+      if (allLayers[tableKey] && indices.length > 0) {
+        map.addLayer(allLayers[tableKey]);
+      }
+    });
+  }
+
+  function showAllLayers() {
+    Object.values(allLayers).forEach(layer => {
+      if (layer && !map.hasLayer(layer)) map.addLayer(layer);
+    });
+  }
+
   (async () => {
     try {
-      // Provincias
       const gj = await (await fetch(config.GEOJSON)).json();
       const prov = L.geoJSON(gj, { style: { color: '#7aa2ff', weight: 1, fillOpacity: 0 } }).addTo(map);
 
-      // Instituciones SIEMPRE
       const l1 = await loadInstituciones();
+      const l2 = await loadGeneric(config.CSV.tabla2, config.LAYER_STYLE.tabla2.color, 'tabla2', 'Cultura', 'tabla2');
+      const l3 = await loadGeneric(config.CSV.tabla3, config.LAYER_STYLE.tabla3.color, 'tabla3', 'Deporte', 'tabla3');
+      const l4 = await loadGeneric(config.CSV.tabla4, config.LAYER_STYLE.tabla4.color, 'tabla4', 'Universidades', 'tabla4');
 
-      // Resto con toggles
-      const l2 = await loadGeneric(config.CSV.tabla2, config.LAYER_STYLE.tabla2.color, 'tabla2', 'Cultura');
-      const l3 = await loadGeneric(config.CSV.tabla3, config.LAYER_STYLE.tabla3.color, 'tabla3', 'Deporte');
-      const l4 = await loadGeneric(config.CSV.tabla4, config.LAYER_STYLE.tabla4.color, 'tabla4', 'Universidades');
+      allLayers = { tabla1: l1, tabla2: l2, tabla3: l3, tabla4: l4 };
 
       const layers = { tabla2: l2, tabla3: l3, tabla4: l4 };
       Object.values(layers).forEach(l => map.addLayer(l));
 
-      // Toggles
       document.getElementById('toggle-prov').onchange = e => e.target.checked ? prov.addTo(map) : map.removeLayer(prov);
       [['tabla2', 'toggle-tabla2'], ['tabla3', 'toggle-tabla3'], ['tabla4', 'toggle-tabla4']].forEach(([k, id]) => {
         const el = document.getElementById(id), lyr = layers[k];
         el.onchange = () => el.checked ? lyr.addTo(map) : map.removeLayer(lyr);
       });
 
-      // Fit bounds
+      setupSearch();
+
       const bounds = L.latLngBounds([]);
       prov.eachLayer(l => { try { bounds.extend(l.getBounds()); } catch (e) { } });
       [l1, l2, l3, l4].forEach(lyr => lyr && lyr.getLayers().forEach(m => { if (m.getLatLng) bounds.extend(m.getLatLng()); }));
