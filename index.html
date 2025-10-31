@@ -3,31 +3,61 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Geovisor – MINEDUC (Tabla 1 robusta)</title>
+  <title>Geovisor MINEDUC — Infraestructura Educativa, Cultural, Deportiva y Universitaria</title>
+
+  <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Marker Cluster -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+  <!-- PapaParse para CSV -->
   <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <!-- Estilos -->
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
   <div id="app">
     <aside id="panel">
-      <h1>Geovisor</h1>
-      <p>Infraestructura Educativa, Cultural, Deportiva y Universitaria (MINEDUC)</p>
+      <h1>🗺️ Geovisor MINEDUC</h1>
+      <p>Infraestructura Educativa, Cultural, Deportiva y Universitaria</p>
+      
       <section>
         <h2>Capas</h2>
-        <label><input type="checkbox" id="toggle-prov" checked/> Provincias</label>
-        <label><input type="checkbox" id="toggle-tabla2" checked/> Cultura</label>
-        <label><input type="checkbox" id="toggle-tabla3" checked/> Deporte</label>
-        <label><input type="checkbox" id="toggle-tabla4" checked/> Universidades</label>
+        <label>
+          <input type="checkbox" id="toggle-prov" checked/> 
+          Provincias
+        </label>
+        <label>
+          <input type="checkbox" id="toggle-tabla2" checked/> 
+          📚 Cultura
+        </label>
+        <label>
+          <input type="checkbox" id="toggle-tabla3" checked/> 
+          ⚽ Deporte
+        </label>
+        <label>
+          <input type="checkbox" id="toggle-tabla4" checked/> 
+          🎓 Universidades
+        </label>
       </section>
+
       <div id="status" class="status"></div>
+
+      <section style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #1f2937;">
+        <p style="font-size: 12px; color: #a0aec0;">
+          Datos cargados desde <strong>GitHub</strong><br/>
+          Proyecto: <a href="https://github.com/powerpaz/Infraestructura_MINEDEC" target="_blank" style="color: #4cc9f0; text-decoration: none;">Infraestructura_MINEDEC</a>
+        </p>
+      </section>
     </aside>
     <div id="map"></div>
   </div>
+
   <script src="config.js"></script>
   <script src="app.js"></script>
 </body>
