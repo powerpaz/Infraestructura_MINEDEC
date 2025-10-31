@@ -74,23 +74,11 @@ html,
   accent-color: #4cc9f0;
 }
 
-#panel a {
-  color: #4cc9f0;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-#panel a:hover {
-  color: #60ddff;
-  text-decoration: underline;
-}
-
 #map {
   height: 100%;
   width: 100%;
 }
 
-/* Leaflet Popup Styling */
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
   background: #1f2937;
@@ -109,7 +97,6 @@ html,
   color: #4cc9f0;
 }
 
-/* Marker Clusters */
 .marker-cluster-small,
 .marker-cluster-medium,
 .marker-cluster-large {
@@ -122,13 +109,6 @@ html,
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-}
-
-.marker-cluster-small span,
-.marker-cluster-medium span,
-.marker-cluster-large span {
-  text-align: center;
-  width: 100%;
 }
 
 .cluster--tabla1 div {
@@ -178,7 +158,6 @@ html,
   line-height: 1.5;
 }
 
-/* Scrollbar customización */
 #panel::-webkit-scrollbar {
   width: 6px;
 }
@@ -196,7 +175,6 @@ html,
   background: #60ddff;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   #app {
     grid-template-columns: 1fr;
