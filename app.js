@@ -10,9 +10,7 @@
   function toNum(v) {
     if (v == null) return NaN;
     if (typeof v === 'string') {
-      v = v.trim();
-      // Reemplazar coma decimal por punto (ej: "616201,8" → "616201.8")
-      v = v.replace(',', '.');
+      v = v.trim().replace(',', '.');
     }
     const n = Number(v);
     return Number.isFinite(n) ? n : NaN;
@@ -45,13 +43,12 @@
     };
     const get = k => (k && row[k] != null && String(row[k]).trim() !== '') ? row[k] : '—';
     
-    // Mapear los campos correctos del CSV
     const amieK = by('amie');
     const nombreK = by('nom_institucion_educativa', 'nombre', 'institucion');
-    const sostK = by('nom_sostenimiento', 'te_fin', 'sostenimiento');
+    const sostK = by('nom_sostenimiento', 'sostenimiento', 'te_fin');
     const regK = by('regimen', 'régimen');
-    const provK = by('dpa_despro', 'dpa_provin', 'provincia');
-    const zonaK = by('da_zona', 'zona', 'zona_admin');
+    const provK = by('dpa_despro', 'provincia');
+    const zonaK = by('da_zona', 'zona');
     
     return `<div>
       <b>AMIE:</b> ${get(amieK)}<br>
@@ -89,38 +86,25 @@
       data = await loadCSV(config.CSV.tabla1);
     } catch (e) {
       console.error('Error cargando tabla1:', e);
-      setStatus('⚠️ Error cargando instituciones de GitHub. Reintentando…');
-      try {
-        // Intento alternativo
-        data = await loadCSV(config.CSV.tabla1);
-      } catch (e2) {
-        setStatus('❌ No se pudo cargar el CSV de instituciones desde GitHub.');
-        console.error('Error final:', e2);
-        return null;
-      }
+      setStatus('❌ No se pudo cargar el CSV de instituciones.');
+      return null;
     }
-
+    
     const layer = makeCluster('tabla1');
     let ok = 0, bad = 0;
     for (const row of data) {
       const keys = Object.keys(row);
       const by = k => keys.find(c => c && c.toLowerCase() === k);
       
-      // Buscar las columnas correctas: x (longitud) y y (latitud)
-      let lon = toNum(row[by('x')]);
-      let lat = toNum(row[by('y')]);
-
-      // Si no encuentra x,y, intentar latitud,longitud (compatibilidad)
-      if (isNaN(lon) || isNaN(lat)) {
-        lat = toNum(row[by('latitud')]);
-        lon = toNum(row[by('longitud')]);
-      }
-
+      // Leer coordenadas WGS84: longitud y latitud
+      let lat = toNum(row[by('latitud')]);
+      let lon = toNum(row[by('longitud')]);
+      
       if (!looksEC(lat, lon)) {
         bad++;
         continue;
       }
-
+      
       layer.addLayer(L.circleMarker([lat, lon], {
         radius: 5,
         fillColor: config.LAYER_STYLE.tabla1.color,
@@ -130,7 +114,7 @@
       }).bindPopup(popupInstitucion(row)));
       ok++;
     }
-
+    
     map.addLayer(layer);
     setStatus(`✓ Instituciones: ${ok} puntos (omitidos ${bad}).`);
     return layer;
@@ -146,13 +130,13 @@
         const keys = Object.keys(row);
         const by = k => keys.find(c => c && c.toLowerCase() === k);
         
-        // Intentar primero x,y luego latitud,longitud
-        let lon = toNum(row[by('x')]);
-        let lat = toNum(row[by('y')]);
+        // Intentar WGS84 primero, luego fallback a UTM
+        let lat = toNum(row[by('latitud')]);
+        let lon = toNum(row[by('longitud')]);
         
-        if (isNaN(lon) || isNaN(lat)) {
-          lat = toNum(row[by('latitud')]);
-          lon = toNum(row[by('longitud')]);
+        if (isNaN(lat) || isNaN(lon)) {
+          lat = toNum(row[by('y')]);
+          lon = toNum(row[by('x')]);
         }
 
         if (!looksEC(lat, lon)) continue;
@@ -207,7 +191,7 @@
 
     } catch (e) {
       console.error('Error en inicialización:', e);
-      setStatus('❌ Error al cargar el geovisor. Revisa la consola.');
+      setStatus('❌ Error al cargar el geovisor.');
     }
   })();
 })();
