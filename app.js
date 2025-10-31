@@ -1,91 +1,212 @@
 (() => {
-const map = L.map('map').setView([-1.83,-78.18],6);
-const baseOSM = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
-const baseSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19});
-L.control.layers({'OSM':baseOSM,'Satélite':baseSat}).addTo(map);
+  const map = L.map('map').setView([-1.83, -78.18], 6);
+  const baseOSM = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+  const baseSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 });
+  L.control.layers({ 'OSM': baseOSM, 'Satélite': baseSat }).addTo(map);
 
-const statusBox = document.getElementById('status');
-const setStatus = (msg) => statusBox.innerHTML = msg;
+  const statusBox = document.getElementById('status');
+  const setStatus = (msg) => statusBox.innerHTML = msg;
 
-const toNum = (v) => { if(v==null) return NaN; if(typeof v==='string'){ v=v.replace(',','.'); } const n=Number(v); return Number.isFinite(n)?n:NaN; };
-const looksEC = (lat,lon) => Number.isFinite(lat)&&Number.isFinite(lon)&&lat>-6.5&&lat<2.5&&lon>-92.8&&lon<-73.5;
-
-// Heurística de normalización para casos comunes en EC
-function normalizeLatLon(lat,lon){
-  let la = toNum(lat), lo = toNum(lon);
-  // Caso directo
-  if(looksEC(la,lo)) return [la,lo];
-  // Intercambiadas
-  if(looksEC(toNum(lon),toNum(lat))) return [toNum(lon),toNum(lat)];
-  // Longitud positiva -> poner negativa (hemisferio occidente)
-  if(Number.isFinite(lo) && lo>0){ lo = -Math.abs(lo); if(looksEC(la,lo)) return [la,lo]; }
-  // Lat fuera de rango pero lo está bien -> probar invertir signos
-  if(Number.isFinite(la) && la>10 && Number.isFinite(lo)){ la = -Math.abs(la); if(looksEC(la,lo)) return [la,lo]; }
-  // Último intento: si ambos parecen grados (|la|<=2.5, 73<|lo|<93) ya se probó
-  return null;
-}
-
-function makeCluster(classKey){
-  return L.markerClusterGroup({
-    iconCreateFunction:c=>{const n=c.getChildCount();const div=document.createElement('div');div.innerHTML=`<span>${n}</span>`;return L.divIcon({html:div,className:`marker-cluster cluster--${classKey}`,iconSize:L.point(40,40)});}
-  });
-}
-
-function popupInstitucion(row){
-  const keys = Object.keys(row);
-  const by = (k,...alts)=>{
-    const t=[k,...alts].map(s=>String(s).toLowerCase());
-    return keys.find(c=>c && t.includes(c.toLowerCase()));
-  };
-  const get = k => (k && row[k]!=null && String(row[k]).trim()!=='') ? row[k] : '—';
-  const amieK = by('amie','cod_amie','codigo_amie');
-  const nombreK = by('nom_institucion_educativa','nombre','institucion','nom_establecimiento');
-  const sostK = by('sostenimiento','te_fin','tipo_sostenimiento');
-  const regK = by('regimen','régimen','regimen_educativo');
-  const provK = by('provincia');
-  const zonaK = by('zona','zona_admin','zona_educativa');
-  return `<div>
-    <b>AMIE:</b> ${get(amieK)}<br>
-    <b>Nombre:</b> ${get(nombreK)}<br>
-    <b>Sostenimiento:</b> ${get(sostK)}<br>
-    <b>Régimen:</b> ${get(regK)}<br>
-    <b>Provincia:</b> ${get(provK)}<br>
-    <b>Zona:</b> ${get(zonaK)}
-  </div>`;
-}
-
-function fetchCSV(path){
-  return new Promise((resolve,reject)=> Papa.parse(path,{download:true,header:true,skipEmptyLines:true,complete:r=>resolve(r.data),error:reject}) );
-}
-
-async function loadInstituciones(){
-  setStatus('Cargando instituciones…');
-  const data = await fetchCSV(config.CSV.instituciones);
-  const layer = makeCluster('tabla1');
-  let ok=0,bad=0;
-  for(const row of data){
-    const keys = Object.keys(row);
-    const find = t => keys.find(k => k && k.toLowerCase()===t);
-    let lat = row[find('latitud')], lon = row[find('longitud')];
-    const norm = normalizeLatLon(lat,lon);
-    if(!norm){ bad++; continue; }
-    const [la,lo] = norm;
-    layer.addLayer(L.circleMarker([la,lo],{radius:5,fillColor:config.LAYER_STYLE.tabla1.color,color:'#fff',weight:1,fillOpacity:.9}).bindPopup(popupInstitucion(row)));
-    ok++;
+  function toNum(v) {
+    if (v == null) return NaN;
+    if (typeof v === 'string') {
+      v = v.replace(',', '.');
+    }
+    const n = Number(v);
+    return Number.isFinite(n) ? n : NaN;
   }
-  map.addLayer(layer);
-  setStatus(`Instituciones: ${ok} puntos (omitidos ${bad}).`);
-  return layer;
-}
 
-(async()=>{
-  // Provincias
-  try{
-    const gj = await (await fetch(config.GEOJSON)).json();
-    const prov = L.geoJSON(gj,{style:{color:'#7aa2ff',weight:1,fillOpacity:0}}).addTo(map);
-    document.getElementById('toggle-prov').onchange=e=>e.target.checked?prov.addTo(map):map.removeLayer(prov);
-  }catch(e){ console.warn('No geojson provincias', e); }
+  function looksEC(lat, lon) {
+    return Number.isFinite(lat) && Number.isFinite(lon) && lat > -6 && lat < 2 && lon > -92.6 && lon < -74;
+  }
 
-  // Instituciones (único objetivo ahora)
-  await loadInstituciones();
-})();})();
+  function makeCluster(classKey) {
+    return L.markerClusterGroup({
+      iconCreateFunction: c => {
+        const n = c.getChildCount();
+        const div = document.createElement('div');
+        div.innerHTML = `<span>${n}</span>`;
+        return L.divIcon({
+          html: div,
+          className: `marker-cluster cluster--${classKey}`,
+          iconSize: L.point(40, 40)
+        });
+      }
+    });
+  }
+
+  function popupInstitucion(row) {
+    const keys = Object.keys(row);
+    const by = (k, ...alts) => {
+      const targets = [k, ...alts].map(s => String(s).toLowerCase());
+      return keys.find(c => c && targets.includes(c.toLowerCase()));
+    };
+    const get = k => (k && row[k] != null && String(row[k]).trim() !== '') ? row[k] : '—';
+    const amieK = by('amie');
+    const nombreK = by('nom_institucion_educativa', 'nombre', 'institucion', 'nom_establecimiento');
+    const sostK = by('sostenimiento', 'te_fin', 'tipo_sostenimiento');
+    const regK = by('regimen', 'régimen', 'regimen_educativo');
+    const provK = by('provincia');
+    const zonaK = by('zona', 'zona_admin', 'zona_educativa');
+    return `<div>
+      <b>AMIE:</b> ${get(amieK)}<br>
+      <b>Nombre:</b> ${get(nombreK)}<br>
+      <b>Sostenimiento:</b> ${get(sostK)}<br>
+      <b>Régimen:</b> ${get(regK)}<br>
+      <b>Provincia:</b> ${get(provK)}<br>
+      <b>Zona:</b> ${get(zonaK)}
+    </div>`;
+  }
+
+  function popupGeneric(row) {
+    return Object.entries(row)
+      .filter(([k, v]) => v != null && String(v).trim() !== '')
+      .slice(0, 16)
+      .map(([k, v]) => `<b>${k}</b>: ${v}`).join('<br>');
+  }
+
+  async function loadCSV(path) {
+    return new Promise((resolve, reject) => {
+      Papa.parse(path, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: r => resolve(r.data),
+        error: reject
+      });
+    });
+  }
+
+  async function loadInstituciones() {
+    setStatus('Cargando instituciones…');
+    let data = [];
+    try {
+      data = await loadCSV(config.CSV.tabla1);
+    } catch (e) {
+      console.error('Error cargando tabla1:', e);
+      setStatus('⚠️ Error cargando instituciones de GitHub. Reintentando…');
+      try {
+        // Intento alternativo
+        data = await loadCSV(config.CSV.tabla1);
+      } catch (e2) {
+        setStatus('❌ No se pudo cargar el CSV de instituciones desde GitHub.');
+        console.error('Error final:', e2);
+        return null;
+      }
+    }
+
+    const layer = makeCluster('tabla1');
+    let ok = 0, bad = 0;
+    for (const row of data) {
+      const keys = Object.keys(row);
+      const by = k => keys.find(c => c && c.toLowerCase() === k);
+      let lat = toNum(row[by('latitud')]);
+      let lon = toNum(row[by('longitud')]);
+
+      // Intentar intercambiar si está al revés
+      if (!looksEC(lat, lon)) {
+        const lat2 = toNum(row[by('longitud')]);
+        const lon2 = toNum(row[by('latitud')]);
+        if (looksEC(lat2, lon2)) {
+          lat = lat2;
+          lon = lon2;
+        }
+      }
+
+      if (!looksEC(lat, lon)) {
+        bad++;
+        continue;
+      }
+
+      layer.addLayer(L.circleMarker([lat, lon], {
+        radius: 5,
+        fillColor: config.LAYER_STYLE.tabla1.color,
+        color: '#fff',
+        weight: 1,
+        fillOpacity: .9
+      }).bindPopup(popupInstitucion(row)));
+      ok++;
+    }
+
+    map.addLayer(layer);
+    setStatus(`✓ Instituciones: ${ok} puntos (omitidos ${bad}).`);
+    return layer;
+  }
+
+  async function loadGeneric(path, color, classKey, nombre) {
+    try {
+      const data = await loadCSV(path);
+      const layer = makeCluster(classKey);
+      let ok = 0;
+
+      for (const row of data) {
+        const keys = Object.keys(row);
+        const by = k => keys.find(c => c && c.toLowerCase() === k);
+        let lat = toNum(row[by('latitud')]);
+        let lon = toNum(row[by('longitud')]);
+
+        if (!looksEC(lat, lon)) {
+          const lat2 = toNum(row[by('longitud')]);
+          const lon2 = toNum(row[by('latitud')]);
+          if (looksEC(lat2, lon2)) {
+            lat = lat2;
+            lon = lon2;
+          }
+        }
+
+        if (!looksEC(lat, lon)) continue;
+
+        layer.addLayer(L.circleMarker([lat, lon], {
+          radius: 5,
+          fillColor: color,
+          color: '#fff',
+          weight: 1,
+          fillOpacity: .9
+        }).bindPopup(popupGeneric(row)));
+        ok++;
+      }
+
+      console.log(`${nombre}: ${ok} puntos cargados`);
+      return layer;
+    } catch (e) {
+      console.error(`Error cargando ${nombre}:`, e);
+      return L.markerClusterGroup();
+    }
+  }
+
+  (async () => {
+    try {
+      // Provincias
+      const gj = await (await fetch(config.GEOJSON)).json();
+      const prov = L.geoJSON(gj, { style: { color: '#7aa2ff', weight: 1, fillOpacity: 0 } }).addTo(map);
+
+      // Instituciones SIEMPRE
+      const l1 = await loadInstituciones();
+
+      // Resto con toggles
+      const l2 = await loadGeneric(config.CSV.tabla2, config.LAYER_STYLE.tabla2.color, 'tabla2', 'Cultura');
+      const l3 = await loadGeneric(config.CSV.tabla3, config.LAYER_STYLE.tabla3.color, 'tabla3', 'Deporte');
+      const l4 = await loadGeneric(config.CSV.tabla4, config.LAYER_STYLE.tabla4.color, 'tabla4', 'Universidades');
+
+      const layers = { tabla2: l2, tabla3: l3, tabla4: l4 };
+      Object.values(layers).forEach(l => map.addLayer(l));
+
+      // Toggles
+      document.getElementById('toggle-prov').onchange = e => e.target.checked ? prov.addTo(map) : map.removeLayer(prov);
+      [['tabla2', 'toggle-tabla2'], ['tabla3', 'toggle-tabla3'], ['tabla4', 'toggle-tabla4']].forEach(([k, id]) => {
+        const el = document.getElementById(id), lyr = layers[k];
+        el.onchange = () => el.checked ? lyr.addTo(map) : map.removeLayer(lyr);
+      });
+
+      // Fit bounds
+      const bounds = L.latLngBounds([]);
+      prov.eachLayer(l => { try { bounds.extend(l.getBounds()); } catch (e) { } });
+      [l1, l2, l3, l4].forEach(lyr => lyr && lyr.getLayers().forEach(m => { if (m.getLatLng) bounds.extend(m.getLatLng()); }));
+      if (bounds.isValid()) map.fitBounds(bounds.pad(0.12));
+
+    } catch (e) {
+      console.error('Error en inicialización:', e);
+      setStatus('❌ Error al cargar el geovisor. Revisa la consola.');
+    }
+  })();
+})();
