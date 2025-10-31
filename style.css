@@ -1,14 +1,216 @@
-body,html,#app,#map{height:100%;margin:0;font-family:system-ui;background:#0b0f19;color:#e6edf7}
-#app{display:grid;grid-template-columns:320px 1fr}
-#panel{background:#0b0f19;padding:15px;overflow:auto;border-right:1px solid #1f2937}
-#panel h1{margin:0;font-size:18px;color:#4cc9f0}
-#panel h2{margin-top:15px;font-size:15px;color:#cbd5e1}
-#panel label{display:block;margin-top:8px}
-#map{height:100%;width:100%}
-.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#1f2937;color:#fff}
-.marker-cluster-small,.marker-cluster-medium,.marker-cluster-large{background:rgba(25,40,60,.9);border:1px solid #2a3655;color:#fff}
-.cluster--tabla1 div{background: radial-gradient(circle,#4cc9f0 0%,#142036 70%)}
-.cluster--tabla2 div{background: radial-gradient(circle,#b5179e 0%,#2a0f2a 70%)}
-.cluster--tabla3 div{background: radial-gradient(circle,#f77f00 0%,#2a1c0f 70%)}
-.cluster--tabla4 div{background: radial-gradient(circle,#43aa8b 0%,#12322a 70%)}
-.status{margin-top:10px;font-size:12px;color:#a0aec0}
+* {
+  box-sizing: border-box;
+}
+
+body,
+html,
+#app,
+#map {
+  height: 100%;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #0b0f19;
+  color: #e6edf7;
+}
+
+#app {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+}
+
+#panel {
+  background: #0b0f19;
+  padding: 15px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 1px solid #1f2937;
+  box-shadow: -1px 0 10px rgba(0, 0, 0, 0.3);
+}
+
+#panel h1 {
+  margin: 0 0 5px 0;
+  font-size: 20px;
+  color: #4cc9f0;
+  font-weight: 600;
+}
+
+#panel p {
+  margin: 0 0 15px 0;
+  font-size: 12px;
+  color: #a0aec0;
+  line-height: 1.4;
+}
+
+#panel section {
+  margin-top: 20px;
+}
+
+#panel h2 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #cbd5e1;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#panel label {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  cursor: pointer;
+  font-size: 13px;
+  color: #cbd5e1;
+  transition: color 0.2s;
+}
+
+#panel label:hover {
+  color: #4cc9f0;
+}
+
+#panel input[type="checkbox"] {
+  margin-right: 10px;
+  cursor: pointer;
+  accent-color: #4cc9f0;
+}
+
+#panel a {
+  color: #4cc9f0;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+#panel a:hover {
+  color: #60ddff;
+  text-decoration: underline;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+}
+
+/* Leaflet Popup Styling */
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: #1f2937;
+  color: #e6edf7;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.leaflet-popup-content b {
+  color: #4cc9f0;
+}
+
+/* Marker Clusters */
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  background: rgba(25, 40, 60, 0.9);
+  border: 2px solid #2a3655;
+  color: #fff;
+  font-weight: bold;
+  font-size: 13px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.marker-cluster-small span,
+.marker-cluster-medium span,
+.marker-cluster-large span {
+  text-align: center;
+  width: 100%;
+}
+
+.cluster--tabla1 div {
+  background: radial-gradient(circle, #4cc9f0 0%, #142036 70%) !important;
+}
+
+.cluster--tabla1 div span {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.cluster--tabla2 div {
+  background: radial-gradient(circle, #b5179e 0%, #2a0f2a 70%) !important;
+}
+
+.cluster--tabla2 div span {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.cluster--tabla3 div {
+  background: radial-gradient(circle, #f77f00 0%, #2a1c0f 70%) !important;
+}
+
+.cluster--tabla3 div span {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.cluster--tabla4 div {
+  background: radial-gradient(circle, #43aa8b 0%, #12322a 70%) !important;
+}
+
+.cluster--tabla4 div span {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.status {
+  margin-top: 15px;
+  padding: 10px;
+  font-size: 12px;
+  color: #a0aec0;
+  background: rgba(79, 204, 240, 0.1);
+  border-left: 3px solid #4cc9f0;
+  border-radius: 2px;
+  line-height: 1.5;
+}
+
+/* Scrollbar customización */
+#panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+#panel::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+
+#panel::-webkit-scrollbar-thumb {
+  background: #4cc9f0;
+  border-radius: 3px;
+}
+
+#panel::-webkit-scrollbar-thumb:hover {
+  background: #60ddff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #app {
+    grid-template-columns: 1fr;
+  }
+
+  #panel {
+    border-right: none;
+    border-bottom: 1px solid #1f2937;
+    max-height: 30vh;
+    position: relative;
+    z-index: 10;
+  }
+
+  #map {
+    height: 70vh;
+  }
+}
