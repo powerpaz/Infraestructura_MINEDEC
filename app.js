@@ -10,6 +10,8 @@
   function toNum(v) {
     if (v == null) return NaN;
     if (typeof v === 'string') {
+      v = v.trim();
+      // Reemplazar coma decimal por punto (ej: "616201,8" → "616201.8")
       v = v.replace(',', '.');
     }
     const n = Number(v);
@@ -42,12 +44,15 @@
       return keys.find(c => c && targets.includes(c.toLowerCase()));
     };
     const get = k => (k && row[k] != null && String(row[k]).trim() !== '') ? row[k] : '—';
+    
+    // Mapear los campos correctos del CSV
     const amieK = by('amie');
-    const nombreK = by('nom_institucion_educativa', 'nombre', 'institucion', 'nom_establecimiento');
-    const sostK = by('sostenimiento', 'te_fin', 'tipo_sostenimiento');
-    const regK = by('regimen', 'régimen', 'regimen_educativo');
-    const provK = by('provincia');
-    const zonaK = by('zona', 'zona_admin', 'zona_educativa');
+    const nombreK = by('nom_institucion_educativa', 'nombre', 'institucion');
+    const sostK = by('nom_sostenimiento', 'te_fin', 'sostenimiento');
+    const regK = by('regimen', 'régimen');
+    const provK = by('dpa_despro', 'dpa_provin', 'provincia');
+    const zonaK = by('da_zona', 'zona', 'zona_admin');
+    
     return `<div>
       <b>AMIE:</b> ${get(amieK)}<br>
       <b>Nombre:</b> ${get(nombreK)}<br>
@@ -100,17 +105,15 @@
     for (const row of data) {
       const keys = Object.keys(row);
       const by = k => keys.find(c => c && c.toLowerCase() === k);
-      let lat = toNum(row[by('latitud')]);
-      let lon = toNum(row[by('longitud')]);
+      
+      // Buscar las columnas correctas: x (longitud) y y (latitud)
+      let lon = toNum(row[by('x')]);
+      let lat = toNum(row[by('y')]);
 
-      // Intentar intercambiar si está al revés
-      if (!looksEC(lat, lon)) {
-        const lat2 = toNum(row[by('longitud')]);
-        const lon2 = toNum(row[by('latitud')]);
-        if (looksEC(lat2, lon2)) {
-          lat = lat2;
-          lon = lon2;
-        }
+      // Si no encuentra x,y, intentar latitud,longitud (compatibilidad)
+      if (isNaN(lon) || isNaN(lat)) {
+        lat = toNum(row[by('latitud')]);
+        lon = toNum(row[by('longitud')]);
       }
 
       if (!looksEC(lat, lon)) {
@@ -142,16 +145,14 @@
       for (const row of data) {
         const keys = Object.keys(row);
         const by = k => keys.find(c => c && c.toLowerCase() === k);
-        let lat = toNum(row[by('latitud')]);
-        let lon = toNum(row[by('longitud')]);
-
-        if (!looksEC(lat, lon)) {
-          const lat2 = toNum(row[by('longitud')]);
-          const lon2 = toNum(row[by('latitud')]);
-          if (looksEC(lat2, lon2)) {
-            lat = lat2;
-            lon = lon2;
-          }
+        
+        // Intentar primero x,y luego latitud,longitud
+        let lon = toNum(row[by('x')]);
+        let lat = toNum(row[by('y')]);
+        
+        if (isNaN(lon) || isNaN(lat)) {
+          lat = toNum(row[by('latitud')]);
+          lon = toNum(row[by('longitud')]);
         }
 
         if (!looksEC(lat, lon)) continue;
