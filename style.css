@@ -1,0 +1,14 @@
+body,html,#app,#map{height:100%;margin:0;font-family:system-ui;background:#0b0f19;color:#e6edf7}
+#app{display:grid;grid-template-columns:320px 1fr}
+#panel{background:#0b0f19;padding:15px;overflow:auto;border-right:1px solid #1f2937}
+#panel h1{margin:0;font-size:18px;color:#4cc9f0}
+#panel h2{margin-top:15px;font-size:15px;color:#cbd5e1}
+#panel label{display:block;margin-top:8px}
+#map{height:100%;width:100%}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#1f2937;color:#fff}
+.marker-cluster-small,.marker-cluster-medium,.marker-cluster-large{background:rgba(25,40,60,.9);border:1px solid #2a3655;color:#fff}
+.cluster--tabla1 div{background: radial-gradient(circle,#4cc9f0 0%,#142036 70%)}
+.cluster--tabla2 div{background: radial-gradient(circle,#b5179e 0%,#2a0f2a 70%)}
+.cluster--tabla3 div{background: radial-gradient(circle,#f77f00 0%,#2a1c0f 70%)}
+.cluster--tabla4 div{background: radial-gradient(circle,#43aa8b 0%,#12322a 70%)}
+.status{margin-top:10px;font-size:12px;color:#a0aec0}
