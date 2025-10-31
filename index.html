@@ -19,36 +19,64 @@
 <body>
   <div id="app">
     <aside id="panel">
-      <h1>🗺️ Geovisor MINEDUC</h1>
-      <p>Infraestructura Educativa, Cultural, Deportiva y Universitaria</p>
+      <div class="panel-header">
+        <h1>🗺️ Geovisor MINEDUC</h1>
+        <p>Infraestructura Educativa, Cultural, Deportiva y Universitaria</p>
+      </div>
       
-      <section>
-        <h2>Capas</h2>
-        <label>
-          <input type="checkbox" id="toggle-prov" checked/> 
-          Provincias
-        </label>
-        <label>
-          <input type="checkbox" id="toggle-tabla2" checked/> 
-          📚 Cultura
-        </label>
-        <label>
-          <input type="checkbox" id="toggle-tabla3" checked/> 
-          ⚽ Deporte
-        </label>
-        <label>
-          <input type="checkbox" id="toggle-tabla4" checked/> 
-          🎓 Universidades
-        </label>
+      <section class="search-section">
+        <div class="search-container">
+          <input 
+            type="text" 
+            id="search-input" 
+            class="search-input" 
+            placeholder="🔍 Buscar por AMIE o nombre..."
+            autocomplete="off"
+          />
+          <button id="clear-search" class="clear-btn" style="display: none;">✕</button>
+        </div>
+        <p class="search-hint">Busca en todas las instituciones, cultura, deporte y universidades</p>
+      </section>
+      
+      <section class="layers-section">
+        <h2>📍 Capas</h2>
+        <div class="layer-item">
+          <label class="checkbox-label">
+            <input type="checkbox" id="toggle-prov" checked/>
+            <span class="checkbox-custom"></span>
+            Provincias
+          </label>
+        </div>
+        <div class="layer-item">
+          <label class="checkbox-label">
+            <input type="checkbox" id="toggle-tabla2" checked/>
+            <span class="checkbox-custom tabla2-color"></span>
+            📚 Cultura
+          </label>
+        </div>
+        <div class="layer-item">
+          <label class="checkbox-label">
+            <input type="checkbox" id="toggle-tabla3" checked/>
+            <span class="checkbox-custom tabla3-color"></span>
+            ⚽ Deporte
+          </label>
+        </div>
+        <div class="layer-item">
+          <label class="checkbox-label">
+            <input type="checkbox" id="toggle-tabla4" checked/>
+            <span class="checkbox-custom tabla4-color"></span>
+            🎓 Universidades
+          </label>
+        </div>
       </section>
 
       <div id="status" class="status"></div>
 
-      <section style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #1f2937;">
-        <p style="font-size: 12px; color: #a0aec0;">
-          Datos: <strong>tabla1_WGS84.csv</strong><br/>
-          Coordenadas: <strong>WGS84 (Latitud/Longitud)</strong><br/>
-          Origen: <strong>GitHub (Sin Supabase)</strong>
+      <section class="info-section">
+        <p>
+          <strong>Datos:</strong> tabla1_WGS84.csv<br/>
+          <strong>Coordenadas:</strong> WGS84<br/>
+          <strong>Fuente:</strong> GitHub
         </p>
       </section>
     </aside>
