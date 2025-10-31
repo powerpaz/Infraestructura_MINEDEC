@@ -1,15 +1,16 @@
 const config = {
+  // URLs directas desde GitHub (raw.githubusercontent.com)
   CSV: {
-    instituciones: "tabla_1.csv",
-    tabla2: "Tabla2.csv",
-    tabla3: "Tabla3_clean.csv",
-    tabla4: "Tabla4_clean.csv"
+    tabla1: "https://raw.githubusercontent.com/powerpaz/Infraestructura_MINEDEC/main/infra_clean_simplified.csv",
+    tabla2: "https://raw.githubusercontent.com/powerpaz/Infraestructura_MINEDEC/main/Tabla2.csv",
+    tabla3: "https://raw.githubusercontent.com/powerpaz/Infraestructura_MINEDEC/main/Tabla3_clean.csv",
+    tabla4: "https://raw.githubusercontent.com/powerpaz/Infraestructura_MINEDEC/main/Tabla4_clean.csv"
   },
-  GEOJSON: "provincias.geojson",
+  GEOJSON: "https://raw.githubusercontent.com/powerpaz/Infraestructura_MINEDEC/main/provincias.geojson",
   LAYER_STYLE: {
-    tabla1: { color: "#4cc9f0" },
-    tabla2: { color: "#b5179e" },
-    tabla3: { color: "#f77f00" },
-    tabla4: { color: "#43aa8b" }
+    tabla1: { color: "#4cc9f0", nombre: "Instituciones Educativas" },
+    tabla2: { color: "#b5179e", nombre: "Cultura" },
+    tabla3: { color: "#f77f00", nombre: "Deporte" },
+    tabla4: { color: "#43aa8b", nombre: "Universidades" }
   }
 };
