@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Geovisor – Infraestructura MINEDUC (Supabase)</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Clusters -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+  <!-- CSV Fallback -->
+  <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <!-- Projections -->
+  <script src="https://unpkg.com/proj4@2.10.0/dist/proj4.js"></script>
+
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div id="app">
+    <aside id="panel">
+      <h1>Geovisor</h1>
+      <p>Infraestructura Educativa, Cultural, Deportiva y Universitaria (MINEDUC)</p>
+      <section>
+        <h2>Capas</h2>
+        <label><input type="checkbox" id="toggle-prov" checked/> Provincias</label>
+        <label><input type="checkbox" id="toggle-tabla1" checked/> Instituciones Educativas</label>
+        <label><input type="checkbox" id="toggle-tabla2" checked/> Cultura</label>
+        <label><input type="checkbox" id="toggle-tabla3" checked/> Deporte</label>
+        <label><input type="checkbox" id="toggle-tabla4" checked/> Universidades</label>
+      </section>
+
+      <section>
+        <h2>Origen de datos</h2>
+        <p><code>USE_SUPABASE</code>: <span id="srcMode"></span></p>
+        <button id="reload">Recargar</button>
+      </section>
+    </aside>
+    <div id="map"></div>
+  </div>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
