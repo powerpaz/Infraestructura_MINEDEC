@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Geovisor MINEDUC — Infraestructura Educativa</title>
+  <title>Geovisor MINEDUC – Infraestructura Educativa</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -22,6 +22,22 @@
       <h1>🗺️ Geovisor MINEDUC</h1>
       <p>Infraestructura Educativa, Cultural, Deportiva y Universitaria</p>
       
+      <!-- Sección de Búsqueda -->
+      <section>
+        <h2>🔍 Búsqueda</h2>
+        <div class="search-container">
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Buscar por nombre..."
+            autocomplete="off"
+          />
+          <button id="clear-search" class="clear-btn" style="display: none;">✕</button>
+        </div>
+        
+        <div id="search-results" class="search-results"></div>
+      </section>
+
       <section>
         <h2>Capas</h2>
         <label>
